@@ -10,7 +10,6 @@
 
 [api]
   dashboard = true
-  insecure = true
 
 [certificatesResolvers.lets-encrypt.acme]
   email = "efeng92@gmail.com"
