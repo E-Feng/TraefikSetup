@@ -3,6 +3,10 @@ version: '3.7'
 services:
   traefik:
     image: traefik:v2.3
+    build: 
+      context: Dockerfile
+    labels:
+      - traefik.enable=true
     ports:
     - 80:80
     - 443:443
@@ -10,7 +14,7 @@ services:
     - /var/run/docker.sock:/var/run/docker.sock
     - ./traefik.toml:/traefik.toml
     - ./traefik_dynamic.toml:/traefik_dynamic.toml
-    - ./acme.json:/acme.json
+    - /var/:/var/acme.json
     networks:
     - web
 
