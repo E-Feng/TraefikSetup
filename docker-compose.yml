@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
   traefik:
+    container_name: traefik
     image: traefik:v2.3
     build: 
       context: Dockerfile
@@ -17,6 +18,3 @@ services:
     - /var/:/var/acme.json
     networks:
     - web
-
-networks:
-  web:
