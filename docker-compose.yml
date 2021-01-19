@@ -17,4 +17,11 @@ services:
     - ./traefik_dynamic.toml:/traefik_dynamic.toml
     - /var/:/var/acme.json
     networks:
-    - web
+    - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_proxy
+  default:
+    driver: bridge
