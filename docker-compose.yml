@@ -25,7 +25,6 @@ services:
     restart: always
     env_file:
       - ./config/.env
-      - ./../FantasyBBallAnalytics/dags/keys/.env
     logging:
       options:
         max-size: 10m
