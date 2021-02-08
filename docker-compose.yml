@@ -9,19 +9,68 @@ services:
     labels:
       - traefik.enable=true
     ports:
-    - 80:80
-    - 443:443
+      - 80:80
+      - 443:443
     volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-    - ./traefik.toml:/traefik.toml
-    - ./traefik_dynamic.toml:/traefik_dynamic.toml
-    - /var/:/var/acme.json
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.toml:/traefik.toml
+      - ./traefik_dynamic.toml:/traefik_dynamic.toml
+      - /var/:/var/acme.json
     networks:
-    - traefik_proxy
+      - traefik_proxy
+
+  webserver:
+    container_name: airflow
+    image: elvinfeng/portfolio:airflow
+    restart: always
+    env_file:
+      - ./config/.env
+      - ./../FantasyBBallAnalytics/dags/keys/.env
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - ./../FantasyBBallAnalytics/dags:/usr/local/airflow/dags
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.airflow.rule=Host(`airflow.elvinfeng.com`)
+      - traefik.http.routers.airflow.tls=true
+      - traefik.http.routers.airflow.tls.certresolver=lets-encrypt
+      - traefik.port=8080
+    command: webserver
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3   
+    networks:
+      - traefik_proxy
+      - internal
+    #ports:
+    #  - "8080:8080"
+
+  postgres:
+    container_name: postgres
+    image: postgres:13.1-alpine
+    environment: 
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks:
+      - internal
 
 networks:
   traefik_proxy:
     external:
       name: traefik_proxy
+  internal:
+    external: false
   default:
     driver: bridge

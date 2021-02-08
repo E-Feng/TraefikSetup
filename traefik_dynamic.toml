@@ -10,3 +10,11 @@
   service = "api@internal"
   [http.routers.api.tls]
     certResolver = "lets-encrypt"
+
+// [http.routers.airflow]
+//   rule = "Host(`airflow.elvinfeng.com`)"
+//   entrypoints = ["websecure"]
+//   middlewares = ["simpleAuth"]
+//   service = "webserver"
+//   [http.routers.airflow.tls]
+//     certResolver = "lets-encrypt"
