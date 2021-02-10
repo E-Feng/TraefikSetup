@@ -11,6 +11,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik.toml:/traefik.toml
@@ -25,7 +26,7 @@ services:
     restart: always
     env_file:
       - ./config/.env
-      - ./../FantasyBBallAnalytics/dags/keys/.env
+      - ./config/fantasy.env
     logging:
       options:
         max-size: 10m
@@ -34,9 +35,6 @@ services:
       - ./../FantasyBBallAnalytics/dags:/usr/local/airflow/dags
     labels:
       - traefik.enable=true
-      - traefik.http.routers.airflow.rule=Host(`airflow.elvinfeng.com`)
-      - traefik.http.routers.airflow.tls=true
-      - traefik.http.routers.airflow.tls.certresolver=lets-encrypt
       - traefik.port=8080
     command: webserver
     healthcheck:
@@ -47,7 +45,7 @@ services:
     networks:
       - traefik_proxy
       - internal
-    #ports:
+    # ports:
     #  - "8080:8080"
 
   postgres:

@@ -15,6 +15,6 @@
   rule = "Host(`airflow.elvinfeng.com`)"
   entrypoints = ["websecure"]
   middlewares = ["simpleAuth"]
-  service = "webserver"
+  service = "webserver-traefik@docker"
   [http.routers.airflow.tls]
     certResolver = "lets-encrypt"
