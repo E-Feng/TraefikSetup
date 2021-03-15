@@ -1,24 +1,6 @@
 version: '3.7'
 
 services:
-  traefik:
-    container_name: traefik
-    image: traefik:v2.3
-    build: 
-      context: Dockerfile
-    labels:
-      - traefik.enable=true
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik.toml:/traefik.toml
-      - ./traefik_dynamic.toml:/traefik_dynamic.toml
-      - /var/:/var/acme.json
-    networks:
-      - traefik_proxy
-
   webserver:
     container_name: airflow
     image: elvinfeng/portfolio:airflow
@@ -32,8 +14,14 @@ services:
         max-file: "3"
     volumes:
       - ./../FantasyBBallAnalytics/dags:/usr/local/airflow/dags
+      - ./config:/usr/local/airflow/config
     labels:
-      - traefik.enable=true
+      - traefik.enable=disable
+      - traefik.http.routers.airflow.rule=Host(`airflow.elvinfeng.com`)
+      - traefik.http.routers.airflow.middlewares=simpleAuth
+      - traefik.http.routers.airflow.entrypoints=websecure
+      - traefik.http.routers.airflow.tls=true
+      - traefik.http.routers.airflow.tls.certresolver=lets-encrypt  
       - traefik.port=8080
     command: webserver
     healthcheck:
@@ -44,8 +32,8 @@ services:
     networks:
       - traefik_proxy
       - internal
-    # ports:
-    #  - "8080:8080"
+    ports:
+     - "8080:8080"
 
   postgres:
     container_name: postgres

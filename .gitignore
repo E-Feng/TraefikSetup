@@ -9,3 +9,4 @@ __pycache__/
 .htaccess
 .env
 config/*.env
+config/*.json
