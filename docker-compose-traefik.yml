@@ -23,7 +23,5 @@ networks:
   traefik_proxy:
     external:
       name: traefik_proxy
-  internal:
-    external: false
   default:
     driver: bridge
